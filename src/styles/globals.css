@@ -1,0 +1,209 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@import url('https://fonts.googleapis.com/css2?family=Kode+Mono:wght@400..700&family=Orbitron:wght@400..900&family=Outfit:wght@100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Russo+One&family=Sora:wght@100..800&family=Source+Code+Pro:ital,wght@0,200..900;1,200..900&display=swap');
+:root {
+  --foreground-rgb: 0, 0, 0;
+  --background-start-rgb: 214, 219, 220;
+  --background-end-rgb: 255, 255, 255;
+}
+canvas {
+	background-color: rgba(#f8f4f4, .5);
+	background-image: linear-gradient(#cccccc99 1px, transparent 1px), linear-gradient(90deg, #cccccc99 1px, transparent 1px), linear-gradient(rgba(207, 205, 205, 0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(207, 205, 205, 0.1) 1px, transparent 1px);
+	background-size: 100px 100px, 100px 100px;
+	background-position: -2px -2px, -2px -2px, -1px -1px, -1px -1px;
+}
+
+input[type=range] { accent-color: rgb(59 130 246);}
+
+#style1 {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  width: 50px;
+  height: 40px;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+}
+#style1::-webkit-color-swatch {
+  border-radius: 10px;
+  /* border: none; */
+  border: 3px solid #1a1b1e;
+}
+#style1::-moz-color-swatch {
+  border: 3px solid #1a1b1e;
+  border-radius: 10px;
+  /* border: none; */
+}
+
+/* Tooltip text */
+.tooltip .tooltiptext {
+  visibility: hidden;
+  width: 100px;
+  background-color: #1a1b1e;
+  color: #fff;
+  text-align: center;
+  padding: 5px 0;
+  border-radius: 4px;
+
+  /* Position the tooltip text */
+  position: absolute;
+  z-index: 1;
+  bottom: 125%;
+  left: 50%;
+  margin-left: -50px;
+
+  /* Fade in tooltip */
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+/* Tooltip arrow */
+.tooltip .tooltiptext::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: #1a1b1e transparent transparent transparent;
+}
+
+/* Show the tooltip text when you mouse over the tooltip container */
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+  opacity: 1;
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+.russo-one-regular {
+  font-family: "Russo One", sans-serif;
+  font-weight: 600;
+  font-style: normal;
+}
+
+.orbitron {
+  font-family: "Orbitron", sans-serif;
+  /* font-optical-sizing: auto; */
+  font-weight: 500;
+  font-style: normal;
+}
+.kode-mono {
+  font-family: "Kode Mono", monospace;
+  /* font-optical-sizing: auto; */
+  font-weight: 600;
+  /* font-style: normal; */
+}
+.divider::after{
+  content: '';
+  width: 4px;
+  height: 200px;
+  background: #ccc;
+  position: absolute;
+  top: 100%;
+  left: 50%;
+}
+.divider::before{
+  content: '';
+  width: 4px;
+  height: 200px;
+  background: #ccc;
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+}
+
+.button {
+  position: relative;
+  height: 50px;
+  width: 100%;
+  border-radius: 15px;
+  overflow: hidden;
+}
+
+.button .button-layer {
+  position: absolute;
+  height: 100%;
+  width: 120%;
+  left: -20%;
+  background-image: radial-gradient( circle farthest-corner at 22.4% 21.7%, #04bde4 0%, #0253b9 100.2% );
+  transition: all 0.5s ease;
+  /* border-radius: 15px; */
+}
+
+.button:hover .button-layer {
+  left: 0;
+}
+
+.button button {
+  position: relative;
+  height: 100%;
+  width: 100%;
+  background: none;
+  outline: none;
+  border: none;
+  font-size: 16px;
+  font-weight: 600;
+  font-family: "Montserrat", sans-serif;
+  cursor: pointer;
+}
+.cool-text{
+  background: linear-gradient(24deg, #376af9, #103CE7 );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.red-text{
+  background: linear-gradient(25deg,#d64c7f,#ee4758 50%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.loader-dots div {
+  animation-timing-function: cubic-bezier(0, 1, 1, 0);
+}
+.loader-dots div:nth-child(1) {
+  left: 8px;
+  animation: loader-dots1 0.6s infinite;
+}
+.loader-dots div:nth-child(2) {
+  left: 8px;
+  animation: loader-dots2 0.6s infinite;
+}
+.loader-dots div:nth-child(3) {
+  left: 32px;
+  animation: loader-dots2 0.6s infinite;
+}
+.loader-dots div:nth-child(4) {
+  left: 56px;
+  animation: loader-dots3 0.6s infinite;
+}
+@keyframes loader-dots1 {
+  0% {
+      transform: scale(0);
+  }
+  100% {
+      transform: scale(1);
+  }
+}
+@keyframes loader-dots3 {
+  0% {
+      transform: scale(1);
+  }
+  100% {
+      transform: scale(0);
+  }
+}
+@keyframes loader-dots2 {
+  0% {
+      transform: translate(0, 0);
+  }
+  100% {
+      transform: translate(24px, 0);
+  }
+}
