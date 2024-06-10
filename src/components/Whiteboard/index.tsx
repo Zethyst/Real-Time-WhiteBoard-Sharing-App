@@ -9,8 +9,7 @@ import React, {
 import rough from "roughjs";
 import { useRouter } from "next/router";
 import { Socket } from "socket.io-client";
-import { useUser } from '@/context/UserContext';
-
+import { useUser } from "@/context/UserContext";
 
 const roughGenerator = rough.generator();
 
@@ -22,9 +21,8 @@ interface Props {
   tool: string;
   color: string;
   thickness: string;
-  socket: Socket
+  socket: Socket;
 }
-
 
 const Canvas: React.FC<Props> = ({
   canvasRef,
@@ -34,7 +32,7 @@ const Canvas: React.FC<Props> = ({
   tool,
   color,
   thickness,
-  socket
+  socket,
 }: Props) => {
   const { user, setUser } = useUser();
   const router = useRouter();
@@ -46,48 +44,62 @@ const Canvas: React.FC<Props> = ({
   const [otherElements, setOtherElements] = useState<any[]>([]); // State to store drawings from other users
   const [loading, setLoading] = useState(false);
 
-
   useEffect(() => {
-    socket.on("WhiteBoardDataResponse",(data)=>{
+    socket.on("WhiteBoardDataResponse", (data) => {
       // console.log("data:",data);
       if (data.elements) {
         setOtherElements(data.elements); // Set drawings from other users
       }
-    })
-    
-  }, [socket])
+    });
+  }, [socket]);
 
   useEffect(() => {
-    const storedUser = localStorage.getItem('user');
+    const storedUser = localStorage.getItem("user");
     if (storedUser) {
       setUser(JSON.parse(storedUser));
     }
   }, []);
 
   useEffect(() => {
+    return () => {
+      socket.emit("userLeft", user);
+      const storedUsers = localStorage.getItem("totalUsers");
+
+      if (storedUsers) {
+        const usersArray = JSON.parse(storedUsers);
+
+        const updatedUsersArray = usersArray.filter(
+          (user: any) => user.userID !== user.userID
+        );
+
+        localStorage.setItem("totalUsers", JSON.stringify(updatedUsersArray));
+      }
+    };
+  }, []);
+
+  useEffect(() => {
     setLoading(true);
-    const storedUser = localStorage.getItem('user');
-    const storedRoomID = localStorage.getItem('roomID');
+    const storedUser = localStorage.getItem("user");
+    const storedRoomID = localStorage.getItem("roomID");
     if (storedUser && storedRoomID) {
       const parsedUser = JSON.parse(storedUser);
       const roomPath = `/room/[roomID]`;
       if (router.pathname === roomPath) {
         setUser(parsedUser);
-        socket.emit('userJoined', parsedUser);
+        socket.emit("userJoined", parsedUser);
       } else {
         setLoading(false);
       }
-    } 
+    }
     setTimeout(() => {
       setLoading(false);
-    }, 4000);
+    }, 2000);
   }, []);
-  
 
   //! Ensuring canvas remembers the drawings after reloads because of lazy loading of elements state
   useEffect(() => {
-    setElements((prev)=>[...prev])
-}, []);
+    setElements((prev) => [...prev]);
+  }, []);
 
   useEffect(() => {
     if (canvasRef.current) {
@@ -99,13 +111,12 @@ const Canvas: React.FC<Props> = ({
         const context = canvas.getContext("2d");
         if (context) {
           context.strokeStyle = color;
-          context.lineWidth = 2; 
+          context.lineWidth = 2;
           context.lineCap = "round";
         }
         contextRef.current = context;
         setCtx(context);
         // console.log(contextRef);
-
       }
     }
   }, [canvasRef]);
@@ -115,7 +126,6 @@ const Canvas: React.FC<Props> = ({
       contextRef.current.strokeStyle = color;
     }
   }, [color]);
-
 
   useLayoutEffect(() => {
     if (canvasRef.current) {
@@ -186,13 +196,13 @@ const Canvas: React.FC<Props> = ({
         });
       };
       // console.log(otherElements);
-      
+
       drawElements(otherElements); // Draw other users' elements
       drawElements(elements); // Draw owner's elements
 
-    socket.emit("WhiteboardData", elements)
+      socket.emit("WhiteboardData", elements);
     }
-  }, [elements,otherElements, ctx, canvasRef, socket]);
+  }, [elements, otherElements, ctx, canvasRef, socket]);
 
   const handleMouseDown = (e: MouseEvent<HTMLDivElement>) => {
     setIsDrawing(true);
@@ -237,8 +247,7 @@ const Canvas: React.FC<Props> = ({
           strokeWidth: Number.parseInt(thickness),
         },
       ]);
-    }
-     else if (tool === "circle") {
+    } else if (tool === "circle") {
       setElements((prevElements) => [
         ...prevElements,
         {
@@ -313,8 +322,7 @@ const Canvas: React.FC<Props> = ({
           }
         })
       );
-    }
-     else if (tool === "circle") {
+    } else if (tool === "circle") {
       setElements((prevElements) =>
         prevElements.map((ele, index) => {
           if (index === prevElements.length - 1) {
@@ -336,10 +344,14 @@ const Canvas: React.FC<Props> = ({
   const handleMouseUp = () => {
     setIsDrawing(false);
   };
-  
-    return (
-      <>
-      <div className={`bg-white ${loading?"":"hidden"} relative left-[50%] translate-x-[-50%] border py-2 px-5 rounded-lg justify-center flex items-center flex-col`}>
+
+  return (
+    <>
+      <div
+        className={`bg-white ${
+          loading ? "" : "hidden"
+        } relative left-[50%] translate-x-[-50%] border py-2 px-5 rounded-lg justify-center flex items-center flex-col`}
+      >
         <div className="loader-dots  relative w-20 h-5 mt-2 flex justify-center items-center">
           <div className="absolute  top-0 mt-1 w-3 h-3 rounded-full bg-green-500"></div>
           <div className="absolute top-0 mt-1 w-3 h-3 rounded-full bg-green-500"></div>
@@ -360,7 +372,6 @@ const Canvas: React.FC<Props> = ({
       </div>
     </>
   );
-
 };
 
 export default Canvas;

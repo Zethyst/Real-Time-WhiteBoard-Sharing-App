@@ -1,7 +1,7 @@
 const express = require("express");
 const http = require("http");
 const app = express();
-let {addUser} = require("./dist/Utils/Users");
+let {addUser, getUser, removeUser} = require("./Utils/Users");
 const server = http.createServer(app);
 const socketIo = require("socket.io");
 const io = socketIo(server);
@@ -21,11 +21,15 @@ io.on("connection", (socket: any) => {
     const { name, userID, roomID, host, presenter } = data;
     socket.join(roomID);
     roomIdGlobal = roomID;
-    const users = addUser(data);
-    socket.emit("userIsJoined", { success: true, users });
+    const users = addUser({name, userID, roomID, host, presenter, socketID:socket.id});
+    // console.log(users);
+    
+    socket.emit("userIsJoined", { success: true, users});
+    socket.broadcast.to(roomIdGlobal).emit("allUsers", users);
+    socket.broadcast.to(roomIdGlobal).emit("UserJoinedMessageBroadcast", name);
     // Broadcast the existing whiteboard data to the newly joined user
     if (elementGlobal[roomID]) {
-      socket.emit("WhiteBoardDataResponse", {
+      socket.broadcast.to(roomIdGlobal).emit("WhiteBoardDataResponse", {
         element: elementGlobal[roomID],
       });
     } else {
@@ -52,8 +56,15 @@ io.on("connection", (socket: any) => {
       elements: elements,
     });
   });
-  socket.on("disconnect", () => {
-    // console.log("[-] User disconnected!");
+
+  socket.on("userLeft", () => {
+    const user = getUser(socket.id);
+    // console.log("Left");
+    
+    if (user) {
+      removeUser(socket.id);
+      socket.broadcast.to(roomIdGlobal).emit("UserLeftMessageBroadcast", user.name);
+    }
   });
 });
 

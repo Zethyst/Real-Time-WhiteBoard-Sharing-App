@@ -2,12 +2,9 @@ import React from "react";
 import CreateRoom from "./CreateRoomForm/index";
 import JoinRoom from "./JoinRoomForm/index";
 
-// import { generateCode } from "@/utils/CodeGenerator";
 
 const Index: React.FC = () => {
-  // let code = generateRoomCode();
 
-  let code = "";
   return (
     <div className="flex gap-20 justify-center items-center">
       <CreateRoom />

@@ -1,11 +1,17 @@
 "use client";
-import React, { useRef, useState,useEffect,  RefObject, createRef } from "react";
+import React, {
+  useRef,
+  useState,
+  useEffect,
+  RefObject,
+  createRef,
+} from "react";
 import Whiteboard from "@/components/Whiteboard/index";
 import { useRouter } from "next/router";
-import { useSocket } from '@/context/SocketContext';
+import { useSocket } from "@/context/SocketContext";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useUser } from '@/context/UserContext';
+import { useUser } from "@/context/UserContext";
 
 // import your icons
 import {
@@ -15,6 +21,7 @@ import {
   faSlash,
 } from "@fortawesome/free-solid-svg-icons";
 import { faSquareFull, faCircle } from "@fortawesome/free-regular-svg-icons";
+import Sidebar from "@/components/Sidebar/Sidebar";
 
 library.add(
   faRotateRight,
@@ -27,25 +34,23 @@ library.add(
 
 // export async function getServerSideProps(context:any) {
 //   console.log("context:",context);
-  
+
 //   const { roomID } = context.params;
 //   const { user } = context.query;
 
 //   return {
 //     props: {
 //       roomID,
-//       user: JSON.parse(user), // Parse the user string back to an object 
+//       user: JSON.parse(user), // Parse the user string back to an object
 //     },
 //   };
 // }
 
-
-
 const RoomPage = () => {
   const router = useRouter();
   const { socket } = useSocket();
-  const { user, setUser } = useUser();
-  
+  const { user, setUser, totalUsers, setTotalUsers } = useUser();
+
   // useEffect(() => {
   //   const storedUser = localStorage.getItem('user');
   //   if (storedUser) {
@@ -53,8 +58,7 @@ const RoomPage = () => {
   //   }
   //   // console.log(user);
   // }, []);
- 
-  
+
   // console.log(router.query.roomID);
 
   type CanvasRefType = RefObject<HTMLCanvasElement>;
@@ -66,10 +70,11 @@ const RoomPage = () => {
 
   const [tool, setTool] = useState("pencil");
   const [color, setColor] = useState("#ff0000");
+  const [openSideBar, setOpenSideBar] = useState(true);
   const [thickness, setThickness] = useState("5");
   const [elements, setElements] = useState<any[]>(() => {
-    if (typeof window !== 'undefined') {
-      const savedElements = localStorage.getItem('canvasElements');
+    if (typeof window !== "undefined") {
+      const savedElements = localStorage.getItem("canvasElements");
       return savedElements ? JSON.parse(savedElements) : [];
     }
     return [];
@@ -86,7 +91,14 @@ const RoomPage = () => {
     setElements([]);
   };
 
-  
+  useEffect(() => {
+    const storedUsers = localStorage.getItem("totalUsers");
+    if (storedUsers) {
+      setTotalUsers(JSON.parse(storedUsers));
+    }
+
+  }, []);
+
   useEffect(() => {
     localStorage.setItem("canvasElements", JSON.stringify(elements));
   }, [elements]);
@@ -110,14 +122,20 @@ const RoomPage = () => {
     );
   };
 
+  const handleSideBarClick = () => {
+    setOpenSideBar(!openSideBar);
+  };
+
   return (
-    <div>
+    <div className="overflow-hidden">
       {/* <h1>Room No: {router.query.roomID}</h1> */}
       <div className="h-[100vh] flex gap-20 justify-center items-end relative">
         <div className="p-5 absolute left-10 top-0 bg-white shadow-xl flex justify-center items-center w-80  rounded-lg my-5">
           <div className="text-2xl text-center font-semibold">
             Whiteboard Sharing App{" "}
-            <div className="text-blue-500">Users Online: 0</div>
+            <div className="text-blue-500">
+              Users Online: {totalUsers.length}
+            </div>
           </div>
         </div>
 
@@ -133,8 +151,7 @@ const RoomPage = () => {
             socket={socket}
           />
         </div>
- 
-       
+
         <div className="flex absolute text-[#1a1b1e] bottom-5 justify-center items-center gap-5 p-5  h-12 bg-white shadow-xl rounded-lg my-5 ">
           {/* Pencil draw */}
           <div
@@ -142,7 +159,7 @@ const RoomPage = () => {
               tool === "pencil" ? "bg-[#d9dffc] text-blue-500" : ""
             }`}
             onClick={() => setTool(tool === "pencil" ? "" : "pencil")}
-            >
+          >
             <span className="tooltiptext">Pen</span>
             <FontAwesomeIcon icon={faPen} size="lg" />
           </div>
@@ -190,7 +207,7 @@ const RoomPage = () => {
           </div>
           {/* Thickness slider */}
           <div className="flex tooltip relative justify-center items-center gap-2 cursor-pointer">
-              <span className="tooltiptext">Thickness</span>
+            <span className="tooltiptext">Thickness</span>
             <input
               type="range"
               value={thickness}
@@ -238,18 +255,33 @@ const RoomPage = () => {
                  : "hover:bg-[#d9dffc] hover:text-blue-500"
              }
            `}
-           >
+            >
               <FontAwesomeIcon icon={faRotateRight} size="lg" />
             </button>
           </div>
         </div>
         <button
-        onClick={handleClearCanvas}
-        className="absolute right-14 bottom-5 shadow-xl p-2 px-3 h-12 w-36  bg-red-600 hover:bg-red-700 text-white  font-semibold rounded-lg my-5"
+          onClick={handleClearCanvas}
+          className="absolute right-14 bottom-5 shadow-xl p-2 px-3 h-12 w-36  bg-red-600 hover:bg-red-700 text-white  font-semibold rounded-lg my-5"
         >
           Clear Canvas
         </button>
 
+        <div
+          className={` absolute z-10 right-0 flex bg-white rounded-l-2xl ${
+            openSideBar ? "translate-x-64" : ""
+          }`}
+          style={{ transition: "all .7s ease" }}
+        >
+          <div
+            style={{ transition: "all .7s ease" }}
+            className={`absolute -left-8 top-[50%] translate-y-[-50%] bg-white z-20 sidebtn w-10 md:w-8  h-40 rounded-l-2xl cursor-pointer shadow-lg flex justify-center items-center`}
+            onClick={handleSideBarClick}
+          >
+            <div className="h-10 w-1 rounded-lg bg-gray-600"></div>
+          </div>
+          <Sidebar />
+        </div>
       </div>
     </div>
   );

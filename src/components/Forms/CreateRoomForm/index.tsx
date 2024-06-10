@@ -50,7 +50,6 @@ const Index: React.FC = () => {
     localStorage.setItem('user', JSON.stringify(roomData));
     localStorage.setItem('roomID', roomID);
     // router.push(`/room/${roomID}`);
-    // console.log("Create Room: ", user);
     
     router.push(
       {
