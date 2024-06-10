@@ -9,6 +9,7 @@ interface User {
 }
 
 const users: User[] = [];
+console.log(users);
 
 // Add a user to the list
 
@@ -19,7 +20,7 @@ const addUser = ({ name, userID, roomID, host, presenter, socketID }: User) => {
     return users; // Return existing users if the user is already present
   }
 
-  const user = { name, userID, roomID, host, presenter,socketID };
+  const user = { name, userID, roomID, host, presenter, socketID };
   users.push(user);
   return users;
 };

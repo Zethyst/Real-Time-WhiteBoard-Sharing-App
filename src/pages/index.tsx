@@ -31,6 +31,12 @@ export default function Home() {
       if (data.success) {
         localStorage.setItem("totalUsers", JSON.stringify(data.users));
         setTotalUsers(data.users);
+    socket.on("UserJoinedMessageBroadcast",(data:any)=>{
+      console.log("Joined",data);
+      setTimeout(() => {
+        dispatch(showMessage({ message: `${data} joined the room`, messageType: 'info' }));
+      }, 3000);
+    })
       }
       else{
         console.log("User couldn't join");
@@ -41,12 +47,12 @@ export default function Home() {
         setTotalUsers(data);
     })
 
-    socket.on("UserJoinedMessageBroadcast",(data:any)=>{
-      console.log("Joined",data);
-      setTimeout(() => {
-        dispatch(showMessage({ message: `${data} joined the room`, messageType: 'info' }));
-      }, 2000);
-    })
+    // socket.on("UserJoinedMessageBroadcast",(data:any)=>{
+    //   console.log("Joined",data);
+    //   setTimeout(() => {
+    //     dispatch(showMessage({ message: `${data} joined the room`, messageType: 'info' }));
+    //   }, 2000);
+    // })
     socket.on("UserLeftMessageBroadcast",(data:any)=>{
       console.log("Left",data);
       dispatch(showMessage({ message: `${data} left the room`, messageType: 'info' }));

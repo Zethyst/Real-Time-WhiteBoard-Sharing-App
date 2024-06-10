@@ -36,8 +36,6 @@ io.on("connection", (socket) => {
     socket.on("WhiteboardData", (data) => {
         // console.log(data);
         const elements = data;
-        // console.log(roomIdGlobal);
-        // console.log(elements);
         // Store the elements data per room
         if (!elementGlobal[roomIdGlobal]) {
             elementGlobal[roomIdGlobal] = [];
@@ -47,6 +45,14 @@ io.on("connection", (socket) => {
         socket.broadcast.to(roomIdGlobal).emit("WhiteBoardDataResponse", {
             elements: elements,
         });
+    });
+    socket.on("message", (data) => {
+        const { message } = data;
+        const timestamp = new Date().toISOString();
+        const user = getUser(socket.id);
+        if (user) {
+            socket.broadcast.to(roomIdGlobal).emit("MessageResponse", { message, user: user.name, time: timestamp });
+        }
     });
     socket.on("userLeft", () => {
         const user = getUser(socket.id);

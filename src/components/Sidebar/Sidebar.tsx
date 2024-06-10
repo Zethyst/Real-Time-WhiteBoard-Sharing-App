@@ -39,7 +39,7 @@ function Sidebar() {
           "10px 20px 45px -1px rgba(0, 0, 0, 0.1), 0px 4px 6px -4px rgba(0, 0, 0, 0.1)",
       }}
     >
-      <h3 className="uppercase text-slate-400 pb-3 text-lg">Users</h3>
+      <h3 className="uppercase text-blue-600 font-semibold pb-3 text-lg">Users</h3>
       <ul
         className=" space-y-3  text-slate-800 text-xs md:text-base"
         style={{ fontFamily: "'Source Sans', sans-serif" }}

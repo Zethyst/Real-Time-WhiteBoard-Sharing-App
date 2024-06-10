@@ -75,7 +75,7 @@ const Index: React.FC = () => {
         className={`-2 h-12 w-full  text-white font-semibold rounded-lg`}
         // style={{background:"radial-gradient( circle farthest-corner at 22.4% 21.7%, rgba(4,189,228,1) 0%, rgba(2,83,185,1) 100.2% )"}}
       >
-        Generate Room
+        Join Room
       </button>
         </div>
     </form>

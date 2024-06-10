@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const users = [];
+console.log(users);
 // Add a user to the list
 const addUser = ({ name, userID, roomID, host, presenter, socketID }) => {
     // Check if the user already exists

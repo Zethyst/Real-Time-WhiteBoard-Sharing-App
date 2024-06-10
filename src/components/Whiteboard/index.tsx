@@ -10,6 +10,8 @@ import rough from "roughjs";
 import { useRouter } from "next/router";
 import { Socket } from "socket.io-client";
 import { useUser } from "@/context/UserContext";
+import { useDispatch } from "react-redux";
+import { showMessage } from "@/store/reducers/notificationSlice";
 
 const roughGenerator = rough.generator();
 
@@ -35,6 +37,7 @@ const Canvas: React.FC<Props> = ({
   socket,
 }: Props) => {
   const { user, setUser } = useUser();
+    const dispatch = useDispatch();
   const router = useRouter();
   const lastX = useRef(0);
   const lastY = useRef(0);
@@ -58,6 +61,16 @@ const Canvas: React.FC<Props> = ({
     if (storedUser) {
       setUser(JSON.parse(storedUser));
     }
+  }, []);
+
+  useEffect(() => {
+    socket.on("UserJoinedMessageBroadcast",(data:any)=>{
+      console.log("Joined",data);
+      setTimeout(() => {
+        dispatch(showMessage({ message: `${data} joined the room`, messageType: 'info' }));
+      }, 1000);
+    })
+    // console.log(user);
   }, []);
 
   useEffect(() => {

@@ -207,3 +207,89 @@ input[type=range] { accent-color: rgb(59 130 246);}
       transform: translate(24px, 0);
   }
 }
+
+.animate-icon{
+  animation-name: iconAnimation;
+  animation-duration: 250ms;
+  animation-timing-function: ease-in;
+}
+@keyframes iconAnimation {
+  0% {
+    opacity: 0;
+    transform: scale(.5);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  
+}
+.curve{
+  position: absolute;
+  z-index: 10;
+  height: 100px;
+  width: 100%;
+  bottom: 0;
+}
+.curve::before{
+  content: "";
+  display: block;
+  position: absolute;
+  border-radius: 110% 80%;
+  /* elipse radius, 1st - vertical 2nd - horizontal */
+  width: 110%;
+  height: 100%;
+  background-color: #f3f4f6;
+  transform: translate(10%,84%);
+}
+.curve::after{
+  content: "";
+  display: block;
+  position: absolute;
+  border-radius: 100% 50%;
+  width: 190%;
+  height: 100%;
+  background-color: #f3f4f6;
+  transform: translate(-70%,84%);
+}
+::-webkit-scrollbar {
+  width: 0.3rem;
+  height: 0.3rem;
+}
+
+::-webkit-scrollbar-track {
+  border-radius: 12px;
+  background: #dddddd;
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  background: linear-gradient(24deg, #103CE7, #64ceff);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: skyblue;
+}
+.myMessage{
+  display:inline-block;
+  z-index: 50;
+  border-radius: 1rem;
+  margin-left: 7rem;
+  margin-top: 0.5rem;
+  margin-bottom: 0.2rem;
+  padding: 0.5rem 1rem;
+  color: white;
+  background: radial-gradient(circle farthest-corner at 12.4% 11.7%, rgba(2,83,185,1) 0%, rgba(4,189,228,1) 100.2%);
+}
+
+.theirMessage{
+  display:inline-block;
+  z-index: 50;
+  border-radius: 1rem;
+  border: 2px solid #93c5fd;
+  margin-right: 17rem; /* Adjust accordingly*/
+  margin-top: 0.5rem;
+  margin-bottom: 0.2rem;
+  padding: 0.5rem 1rem;
+  color: #111827;
+}
