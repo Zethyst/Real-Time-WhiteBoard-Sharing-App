@@ -92,7 +92,7 @@ export default function Home() {
       <div className="absolute z-50">
       <ToastContainer position="top-right"/>
       </div>
-      <div className="bg-white p-36 rounded-3xl">
+      <div className="bg-white md:p-36 rounded-3xl mx-5">
         <Form />
       </div>
     </div>

@@ -8,8 +8,11 @@ import { useUser } from '@/context/UserContext';
 import { useDispatch } from "react-redux";
 import { showMessage } from "@/store/reducers/notificationSlice";
 
-const Index: React.FC = () => {
-
+interface Props {
+  mode: string;
+  setMode: React.Dispatch<React.SetStateAction<string>>;
+}
+const Index: React.FC<Props> = ({ mode, setMode }) => {
   const router = useRouter();
   const { socket } = useSocket();
   const { user, setUser } = useUser();
@@ -64,7 +67,7 @@ const Index: React.FC = () => {
 
 
   return (
-    <form className="flex flex-col justify-center items-center gap-10 p-10 w-[50%]">
+    <form className={`${mode==="create"?"flex":"hidden md:flex"} flex-col justify-center items-center gap-10  p-10 md:w-[50%]`}>
       <p className="cool-text text-5xl font-bold tracking-wide">Create Room</p>
       {/* <Image src={CreateRoomImage} width={400} alt="CreateRoom"  /> */}
       <div className="flex flex-col justify-center items-center gap-3 w-full">
@@ -117,6 +120,7 @@ const Index: React.FC = () => {
           Generate Room
         </button>
       </div>
+        <p onClick={()=>{setMode("join")}} className="block md:hidden underline text-blue-500 cursor-pointer">or join a room, if you've got a code</p>
     </form>
   );
 };

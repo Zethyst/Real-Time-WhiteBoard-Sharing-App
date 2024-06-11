@@ -8,7 +8,11 @@ import { useUser } from '@/context/UserContext';
 import { useRouter } from "next/router";
 
 
-const Index: React.FC = () => {
+interface Props {
+  mode: string;
+  setMode: React.Dispatch<React.SetStateAction<string>>;
+}
+const Index: React.FC<Props> = ({ mode, setMode }) => {
 
   const router = useRouter();
   const { socket } = useSocket();
@@ -43,7 +47,7 @@ const Index: React.FC = () => {
 
 
   return (
-    <form className="flex flex-col justify-center items-center gap-10 p-10 w-[50%]">
+    <form className={`${mode==="join"?"flex":"hidden md:flex"} flex-col justify-center items-center gap-10 p-10 md:w-[50%]`}>
       <p className="cool-text text-5xl font-bold tracking-wide">
         Join Room
       </p>
@@ -78,6 +82,7 @@ const Index: React.FC = () => {
         Join Room
       </button>
         </div>
+        <p onClick={()=>{setMode("create")}} className="block md:hidden underline text-blue-500 cursor-pointer">or create a room, if you've not got a code</p>
     </form>
   );
 }

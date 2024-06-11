@@ -76,9 +76,12 @@ const RoomPage = () => {
 
   const [tool, setTool] = useState("pencil");
   const [color, setColor] = useState("#ff0000");
-  const [openSideBar, setOpenSideBar] = useState(true);
-  const [isChatOpen, setIsChatOpen] = useState(false);
-  const [message, setMessage] = useState("");
+  const [openSideBar, setOpenSideBar] = useState<boolean>(true);
+  const [isChatOpen, setIsChatOpen] = useState<boolean>(false);
+  const [isMobile, setIsMobile] = useState<boolean>(false);
+  const [penMode, setPenMode] = useState<boolean>(false);
+  const [badge, setBadge] = useState<boolean>(false);
+  const [message, setMessage] = useState<string>("");
   const [chats, setChats] = useState<chat[]>([]);
   const [thickness, setThickness] = useState("5");
   const [elements, setElements] = useState<any[]>(() => {
@@ -111,24 +114,46 @@ const RoomPage = () => {
     localStorage.setItem("canvasElements", JSON.stringify(elements));
   }, [elements]);
 
+
+  useEffect(() => {
+    // Function to update state based on screen size
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768); 
+    };
+
+    handleResize();
+
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+
+  let newMessages = 0;
   useEffect(() => {
     socket.on("MessageResponse", (data) => {
+      setBadge(true);
+      newMessages += 1;
       setChats((prevChats) => {
         // Check if the incoming message is different from the last message
         const lastMessage = prevChats[prevChats.length - 1];
-        if (!lastMessage || lastMessage.message !== data.message || lastMessage.time !== data.time) {
+        if (
+          !lastMessage ||
+          lastMessage.message !== data.message ||
+          lastMessage.time !== data.time
+        ) {
           return [...prevChats, data];
         }
         return prevChats;
       });
     });
-  
+
     // // Cleanup on unmount
     // return () => {
     //   socket.off("MessageResponse");
     // };
   }, []);
-  
 
   const undo = () => {
     if (elements.length === 1) {
@@ -149,7 +174,7 @@ const RoomPage = () => {
     );
   };
 
-  const formatDate = (dateString:string) => {
+  const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     const options = {
       day: "2-digit" as const,
@@ -167,13 +192,18 @@ const RoomPage = () => {
   };
   const handleChat = () => {
     setIsChatOpen(!isChatOpen);
+    setBadge(false);
+    newMessages = 0;
   };
 
   const handleSend = (e: any) => {
     e.preventDefault();
     if (message.trim() !== "") {
-      socket.emit("message", {message});
-      setChats((prevChats)=> [...prevChats, {message, user: "You", time: new Date().toISOString() }]);
+      socket.emit("message", { message });
+      setChats((prevChats) => [
+        ...prevChats,
+        { message, user: "You", time: new Date().toISOString() },
+      ]);
       setMessage("");
     }
   };
@@ -186,13 +216,13 @@ const RoomPage = () => {
     <div className="overflow-hidden">
       {/* <h1>Room No: {router.query.roomID}</h1> */}
       <div className="h-[100vh] flex gap-20 justify-center items-end relative">
-        <div className="p-5 absolute left-10 top-0 bg-white shadow-xl flex justify-center items-center w-80  rounded-lg my-5">
-          <div className="text-2xl text-center font-semibold">
+        <div className="p-2 md:p-5 absolute md:left-10 top-0 bg-white shadow-xl flex flex-col justify-center items-center w-full md:w-80  rounded-lg md:my-5">
+          <div className="hidden md:block text-2xl text-center font-semibold">
             Whiteboard Sharing App{" "}
-            <div className="text-blue-500">
-              Users Online: {totalUsers.length}
-            </div>
           </div>
+            <div className="text-blue-500 text-xl md:text-2xl font-semibold">
+              Online: {totalUsers.length}
+            </div>
         </div>
 
         <div className=" bg-[#f8f4f4] shadow-xl flex justify-center items-center mx-auto overflow-hidden">
@@ -230,13 +260,21 @@ const RoomPage = () => {
             <div className="MessageBox relative h-[55%] mx-2 px-3 z-30 w-full overflow-y-scroll">
               {/* All messages */}
               {chats.map((msg, index) => (
-                <div key={index} className="flex flex-col justify-center items-end">
-                  <p  className={`${(msg.user==="You")?"myMessage":"theirMessage"}`}>
+                <div
+                  key={index}
+                  className="flex flex-col justify-center items-end"
+                >
+                  <p
+                    className={`${
+                      msg.user === "You" ? "myMessage" : "theirMessage"
+                    }`}
+                  >
                     {msg.message}
                   </p>
-                  <small className="text-gray-700">{formatDate(msg.time)}</small>
+                  <small className="text-gray-700">
+                    {formatDate(msg.time)}
+                  </small>
                 </div>
-                
               ))}
             </div>
             <form onSubmit={handleSend}>
@@ -260,16 +298,22 @@ const RoomPage = () => {
             </form>
           </div>
         </div>
+
+        {/* Chat Button */}
         <div
           onClick={handleChat}
-          className="rounded-full  absolute left-10 p-4 bottom-7 w-16 h-16 flex justify-center items-center cursor-pointer shadow-xl text-white"
+          className="rounded-full  absolute left-6 md:left-10 p-4 bottom-4 md:bottom-7 w-16 h-16 flex justify-center items-center cursor-pointer shadow-xl text-white"
           style={{
             background:
               "radial-gradient( circle farthest-corner at 22.4% 21.7%, rgba(2,83,185,1) 0%, rgba(4,189,228,1) 100.2% )",
           }}
         >
-          <div className="p-1 rounded-full h-5 w-5 bg-red-600 absolute z-50 right-0 top-0 flex justify-center items-center">
-            <span className="text-xs">1</span>
+          <div
+            className={`p-1 ${
+              badge ? "" : "hidden"
+            } rounded-full h-5 w-5 bg-red-600 absolute z-50 right-0 top-0 flex justify-center items-center`}
+          >
+            <span className="text-xs">{chats.length}</span>
           </div>
           {isChatOpen ? (
             <div>
@@ -291,51 +335,74 @@ const RoomPage = () => {
           )}
         </div>
 
-        <div className="flex absolute  bottom-3 justify-center items-center gap-3">
-          <div className="flex text-[#1a1b1e] justify-center items-center gap-5 p-5  h-12 bg-white shadow-xl rounded-lg my-5 ">
+
+        {/* Tools */}
+        <div className="flex flex-col md:flex-row absolute left-3 transform  translate-y-[-50%] top-1/2 md:top-auto md:left-auto md:bottom-3 md:translate-x-0 md:translate-y-0 justify-center items-center gap-1 md:gap-3">
+          <div className="flex flex-col md:flex-row text-[#1a1b1e] justify-center items-center gap-5 p-2 md:p-5  md:h-12 bg-white shadow-xl rounded-lg my-5 ">
             {/* Pencil draw */}
             <div
-              className={`flex tooltip relative cursor-pointer justify-center items-center gap-2 hover:bg-[#d9dffc] hover:text-blue-500 p-2 rounded-md ${
+              className={`flex tooltipAbove relative cursor-pointer justify-center items-center gap-2 hover:bg-[#d9dffc] hover:text-blue-500 p-2 rounded-md ${
                 tool === "pencil" ? "bg-[#d9dffc] text-blue-500" : ""
               }`}
-              onClick={() => setTool(tool === "pencil" ? "" : "pencil")}
+              onClick={() => {setTool(tool === "pencil" ? "pencil" : "pencil")
+                              setPenMode(!penMode);
+              }}
             >
-              <span className="tooltiptext">Pen</span>
+              <span className={`tooltipAbovetext`}>Pen</span>
               <FontAwesomeIcon icon={faPen} size="lg" />
+            {/* Mobile Thickness slider */}
+            <div className={`${penMode?"flex":"hidden"} flex-col absolute left-16 rounded-xl p-2 justify-center items-center gap-2 cursor-pointer bg-white`}>
+              <span className={`text-gray-900 font-semibold`}>Thickness</span>
+              <input
+                type="range"
+                value={thickness}
+                min={1}
+                max={50}
+                onChange={(e) => setThickness(e.target.value)}
+                className="cursor-pointer"
+                style={{
+                  /* Slider Track */
+                  background: "linear-gradient(to right, #007BFF, #007BFF)",
+                  /* Slider Thumb */
+                  border: "2px solid #007BFF",
+                  }}
+                  />
             </div>
+                  </div>
+            
             {/* Line */}
             <div
-              className={`flex tooltip relative cursor-pointer justify-center items-center gap-2 hover:bg-[#d9dffc] hover:text-blue-500 p-2 rounded-md ${
+              className={`flex ${isMobile?"tooltipRight":"tooltipAbove"} relative cursor-pointer justify-center items-center gap-2 hover:bg-[#d9dffc] hover:text-blue-500 p-2 rounded-md ${
                 tool === "line" ? "bg-[#d9dffc] text-blue-500" : ""
               }`}
               onClick={() => setTool(tool === "line" ? "" : "line")}
             >
-              <span className="tooltiptext">Line</span>
+              <span className={`${isMobile?"tooltipRighttext":"tooltipAbovetext"}`}>Line</span>
               <FontAwesomeIcon icon={faSlash} rotation={270} size="lg" />
             </div>
             {/* Rectangle Shape */}
             <div
-              className={`flex tooltip relative cursor-pointer justify-center items-center gap-2 hover:bg-[#d9dffc] hover:text-blue-500 p-2 rounded-md ${
+              className={`flex ${isMobile?"tooltipRight":"tooltipAbove"} relative cursor-pointer justify-center items-center gap-2 hover:bg-[#d9dffc] hover:text-blue-500 p-2 rounded-md ${
                 tool === "rect" ? "bg-[#d9dffc] text-blue-500" : ""
               }`}
               onClick={() => setTool(tool === "rect" ? "" : "rect")}
             >
-              <span className="tooltiptext">Rectangle</span>
+              <span className={`${isMobile?"tooltipRighttext":"tooltipAbovetext"}`}>Rectangle</span>
               <FontAwesomeIcon icon={faSquareFull} size="lg" />
             </div>
             {/* Circle Shape */}
             <div
-              className={`flex tooltip relative cursor-pointer justify-center items-center gap-2 hover:bg-[#d9dffc] hover:text-blue-500 p-2 rounded-md ${
+              className={`flex ${isMobile?"tooltipRight":"tooltipAbove"} relative cursor-pointer justify-center items-center gap-2 hover:bg-[#d9dffc] hover:text-blue-500 p-2 rounded-md ${
                 tool === "circle" ? "bg-[#d9dffc] text-blue-500" : ""
               }`}
               onClick={() => setTool(tool === "circle" ? "" : "circle")}
             >
-              <span className="tooltiptext">Circle</span>
+              <span className={`${isMobile?"tooltipRighttext":"tooltipAbovetext"}`}>Circle</span>
               <FontAwesomeIcon icon={faCircle} size="lg" />
             </div>
             {/* Color Input*/}
-            <div className="flex tooltip relative justify-center items-center gap-2 cursor-pointer">
-              <span className="tooltiptext">Color</span>
+            <div className={`flex ${isMobile?"tooltipRight":"tooltipAbove"} relative justify-center items-center gap-2 cursor-pointer`}>
+              <span className={`${isMobile?"tooltipRighttext":"tooltipAbovetext"}`}>Color</span>
               <input
                 type="color"
                 name="tool"
@@ -346,8 +413,8 @@ const RoomPage = () => {
               />
             </div>
             {/* Thickness slider */}
-            <div className="flex tooltip relative justify-center items-center gap-2 cursor-pointer">
-              <span className="tooltiptext">Thickness</span>
+            <div className={`hidden md:flex ${isMobile?"tooltipRight":"tooltipAbove"} relative justify-center items-center gap-2 cursor-pointer`}>
+              <span className={`${isMobile?"tooltipRighttext":"tooltipAbovetext"}`}>Thickness</span>
               <input
                 type="range"
                 value={thickness}
@@ -364,9 +431,9 @@ const RoomPage = () => {
               />
             </div>
           </div>
-          <div className="p-1  bg-white shadow-xl flex justify-center items-center h-12 w-36 rounded-lg gap-2 my-5">
-            <div className="tooltip relative">
-              <span className="tooltiptext">Undo</span>
+          <div className="p-1 bg-white shadow-xl flex flex-col md:flex-row justify-center items-center md:h-12 md:w-36 rounded-lg gap-2 md:my-5">
+            <div className={`${isMobile?"tooltipRight":"tooltipAbove"} relative`}>
+              <span className={`${isMobile?"tooltipRighttext":"tooltipAbovetext"}`}>Undo</span>
               <button
                 onClick={undo}
                 disabled={elements.length === 0}
@@ -382,9 +449,10 @@ const RoomPage = () => {
               </button>
             </div>
 
-            <hr className=" h-8" style={{ borderLeft: "2px solid #ccc" }} />
-            <div className="tooltip relative">
-              <span className="tooltiptext">Redo</span>
+            <hr className="hidden md:block md:h-8" style={{ borderLeft: "2px solid #ccc" }} />
+            {/* <br className="block md:hidden w-8" style={{ borderBottom: "2px solid #ccc" }} /> */}
+            <div className={`${isMobile?"tooltipRight":"tooltipAbove"} relative`}>
+              <span className={`${isMobile?"tooltipRighttext":"tooltipAbovetext"}`}>Redo</span>
               <button
                 onClick={redo}
                 disabled={history.length < 1}
@@ -404,7 +472,7 @@ const RoomPage = () => {
 
         <button
           onClick={handleClearCanvas}
-          className="absolute right-14 bottom-3 shadow-xl p-2 px-3 h-12 w-36  bg-red-600 hover:bg-red-700 text-white  font-semibold rounded-lg my-5"
+          className="absolute right-5 md:right-14 bottom-0 md:bottom-3 shadow-xl p-2 px-3 h-12 w-36  bg-red-600 hover:bg-red-700 text-white  font-semibold rounded-lg my-5"
         >
           Clear Canvas
         </button>
