@@ -7,7 +7,8 @@ import { useEffect } from "react";
 import { Provider } from "react-redux";
 import { store } from "@/store/store";
 
-const server = "http://localhost:5000";
+const server = "https://whiteboard-sharing-app-backend.onrender.com";
+// const server = "http://localhost:5000";
 
 interface ConnectionTypes {
   "force new connection": boolean;
