@@ -217,7 +217,7 @@ const Canvas: React.FC<Props> = ({
     }
   }, [elements, otherElements, ctx, canvasRef, socket]);
 
-  const handleMouseDown = (e: MouseEvent<HTMLDivElement>) => {
+  const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
     setIsDrawing(true);
     let offsetX = e.nativeEvent.offsetX;
     let offsetY = e.nativeEvent.offsetY;
@@ -277,7 +277,7 @@ const Canvas: React.FC<Props> = ({
     lastY.current = offsetY;
   };
 
-  const handleMouseMove = (e: MouseEvent<HTMLDivElement>) => {
+  const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
     if (!isDrawing) {
       return;
     }
@@ -354,7 +354,7 @@ const Canvas: React.FC<Props> = ({
     lastY.current = currentY;
   };
 
-  const handleMouseUp = () => {
+  const handlePointerUp = () => {
     setIsDrawing(false);
   };
 
@@ -377,9 +377,9 @@ const Canvas: React.FC<Props> = ({
       </div>
       <div
         className=" h-full w-full overflow-hidden "
-        onMouseDown={handleMouseDown}
-        onMouseMove={handleMouseMove}
-        onMouseUp={handleMouseUp}
+        onPointerDown={handlePointerDown}
+        onPointerMove={handlePointerMove}
+        onPointerUp={handlePointerUp}
       >
         <canvas ref={canvasRef} />
       </div>

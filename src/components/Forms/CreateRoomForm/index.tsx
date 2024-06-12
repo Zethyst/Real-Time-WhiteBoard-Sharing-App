@@ -31,6 +31,10 @@ const Index: React.FC<Props> = ({ mode, setMode }) => {
   };
   const handleCopy = (e: any) => {
     e.preventDefault();
+    if (roomID==="") {
+      dispatch(showMessage({ message: `Please generate a room code`, messageType: 'error' }));
+      return;
+    }
     dispatch(showMessage({ message: `Text copied to clipboard`, messageType: 'success' }));
     if (navigator.clipboard) {
       navigator.clipboard.writeText(roomID).then(() => {
@@ -41,7 +45,10 @@ const Index: React.FC<Props> = ({ mode, setMode }) => {
   }};
   const handleSubmit = (e: any) => {
     e.preventDefault();
-
+    if (roomID==="") {
+      dispatch(showMessage({ message: `Please generate a room code`, messageType: 'error' }));
+      return;
+    }
     const roomData = {
       name,
       roomID,

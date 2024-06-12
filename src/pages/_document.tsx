@@ -6,6 +6,8 @@ export default function Document() {
   return (
     <Html lang="en">
       <Head>
+      {/* <meta name="image" content="/skill.png" />
+      <meta name="whatsapp:image" content="/skill.png" /> */}
       <Script src="https://kit.fontawesome.com/e822fa5c46.js" crossOrigin="anonymous"></Script>
       <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,1,0&display=optional" />
       <link

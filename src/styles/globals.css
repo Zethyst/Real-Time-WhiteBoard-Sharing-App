@@ -316,11 +316,17 @@ input[type=range] { accent-color: rgb(59 130 246);}
 ::-webkit-scrollbar-thumb:hover {
   background: skyblue;
 }
-.myMessage{
-  display:inline-block;
+.chatContainer {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  position: relative;
+}
+
+.myMessage {
+  align-self: flex-end;
   z-index: 50;
   border-radius: 1rem;
-  margin-left: 7rem;
   margin-top: 0.5rem;
   margin-bottom: 0.2rem;
   padding: 0.5rem 1rem;
@@ -328,12 +334,11 @@ input[type=range] { accent-color: rgb(59 130 246);}
   background: radial-gradient(circle farthest-corner at 12.4% 11.7%, rgba(2,83,185,1) 0%, rgba(4,189,228,1) 100.2%);
 }
 
-.theirMessage{
-  display:inline-block;
+.theirMessage {
+  align-self: flex-start;
   z-index: 50;
   border-radius: 1rem;
   border: 2px solid #93c5fd;
-  margin-right: 17rem; /* Adjust accordingly*/
   margin-top: 0.5rem;
   margin-bottom: 0.2rem;
   padding: 0.5rem 1rem;

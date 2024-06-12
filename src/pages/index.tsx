@@ -1,5 +1,5 @@
 "use client";
-import Image from "next/image";
+import Head from 'next/head';
 import { useRouter } from "next/router";
 import { useSocket } from '@/context/SocketContext';
 import { Inter } from "next/font/google";
@@ -85,6 +85,11 @@ export default function Home() {
 
   return (
     <>
+      <Head>
+        <title>WhiteWave | Real-Time WhiteBoard Sharing App</title>
+        <meta name="description" content="Enjoy a sleek UI, robust chat system, and a variety of drawing options including pen, line, and shapes. Customize your drawings with thickness and color controls, and collaborate in real-time with multiple users. Features like undo/redo and real-time sharing make WhiteWave the ultimate tool for seamless teamwork." />
+        <link rel="icon" href="./favicon.ico" />
+      </Head>
     <div
       className="h-[100vh] flex justify-center items-center"
       style={{ background: "linear-gradient(24deg, #141e30, #243b55)" }}

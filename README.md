@@ -2,7 +2,7 @@
 
 <p>WhiteWave is a cutting-edge, real-time collaborative whiteboard application designed to boost teamwork and creativity across various settings. Featuring a user-friendly interface, comprehensive drawing tools, and robust real-time collaboration capabilities, it's the perfect tool for brainstorming, teaching, and project planning. Key features include an integrated chat system, versatile drawing options like pens, lines, and shapes, customizable color and thickness controls, and essential undo/redo functionality. Experience seamless collaboration with WhiteWave!</p>
 
-[Visit Now](https://example.app/) 🚀
+[Visit Now](https://real-time-white-board-sharing-app.vercel.app/) 🚀
 
 ## 🖥️ Tech Stack
 **Frontend:**
@@ -44,6 +44,10 @@
 </dl>
 
 ## 📌 Screenshots:
+![room](/img/room.png)
+![home](/img/home.png)
+![collab](/img/collab.png)
+![chat](/img/chat.png)
 
 <h2>📬 Contact</h2>
 

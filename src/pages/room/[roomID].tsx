@@ -67,6 +67,7 @@ const RoomPage = () => {
   // Create refs with the defined types
   const canvasRef: CanvasRefType = useRef(null); //! useRef immutable
   const contextRef: ContextRefType = createRef(); //! createRef mutable and doesn't give ref.current is read-only error
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
   interface chat {
     message: string;
@@ -84,6 +85,7 @@ const RoomPage = () => {
   const [message, setMessage] = useState<string>("");
   const [chats, setChats] = useState<chat[]>([]);
   const [thickness, setThickness] = useState("5");
+  const [newMessages, setNewMessages] = useState(0);
   const [elements, setElements] = useState<any[]>(() => {
     if (typeof window !== "undefined") {
       const savedElements = localStorage.getItem("canvasElements");
@@ -114,27 +116,25 @@ const RoomPage = () => {
     localStorage.setItem("canvasElements", JSON.stringify(elements));
   }, [elements]);
 
-
   useEffect(() => {
     // Function to update state based on screen size
     const handleResize = () => {
-      setIsMobile(window.innerWidth < 768); 
+      setIsMobile(window.innerWidth < 768);
     };
 
     handleResize();
 
-    window.addEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
 
     return () => {
-      window.removeEventListener('resize', handleResize);
+      window.removeEventListener("resize", handleResize);
     };
   }, []);
 
-  let newMessages = 0;
   useEffect(() => {
     socket.on("MessageResponse", (data) => {
       setBadge(true);
-      newMessages += 1;
+      setNewMessages((prev) => prev + 1);
       setChats((prevChats) => {
         // Check if the incoming message is different from the last message
         const lastMessage = prevChats[prevChats.length - 1];
@@ -192,8 +192,11 @@ const RoomPage = () => {
   };
   const handleChat = () => {
     setIsChatOpen(!isChatOpen);
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
     setBadge(false);
-    newMessages = 0;
+    setNewMessages(0);
   };
 
   const handleSend = (e: any) => {
@@ -220,9 +223,9 @@ const RoomPage = () => {
           <div className="hidden md:block text-2xl text-center font-semibold">
             Whiteboard Sharing App{" "}
           </div>
-            <div className="text-blue-500 text-xl md:text-2xl font-semibold">
-              Online: {totalUsers.length}
-            </div>
+          <div className="text-blue-500 text-xl md:text-2xl font-semibold">
+            Online: {totalUsers.length}
+          </div>
         </div>
 
         <div className=" bg-[#f8f4f4] shadow-xl flex justify-center items-center mx-auto overflow-hidden">
@@ -241,7 +244,7 @@ const RoomPage = () => {
         <div
           className={` ${
             isChatOpen ? "" : "hidden"
-          } bg-gray-100 overflow-hidden animate-icon absolute left-10 bottom-28 z-20 shadow-xl rounded-lg w-96 h-96 flex flex-col justify-start items-start`}
+          } bg-gray-100 overflow-hidden animate-icon absolute md:left-10 bottom-28 z-20 shadow-xl rounded-lg mx-10 w-[85%] md:w-96 h-96 flex flex-col justify-start items-start`}
         >
           <div
             className=" p-9 relative w-full rounded-t-lg"
@@ -257,21 +260,24 @@ const RoomPage = () => {
           </div>
 
           <div className="bg-gray-100 px-2 h-full  w-full rounded-lg ">
-            <div className="MessageBox relative h-[55%] mx-2 px-3 z-30 w-full overflow-y-scroll">
+            <div  ref={messagesEndRef} className="MessageBox relative h-[55%] mx-2 px-3 z-30 w-full overflow-y-scroll">
               {/* All messages */}
               {chats.map((msg, index) => (
-                <div
-                  key={index}
-                  className="flex flex-col justify-center items-end"
-                >
+                <div key={index} className="flex flex-col chatContainer ">
                   <p
-                    className={`${
+                    className={` ${
                       msg.user === "You" ? "myMessage" : "theirMessage"
                     }`}
                   >
                     {msg.message}
                   </p>
-                  <small className="text-gray-700">
+                  <small
+                    className={`${
+                      msg.user === "You"
+                        ? "self-end"
+                        : "self-start translate-x-2"
+                    } text-gray-700 `}
+                  >
                     {formatDate(msg.time)}
                   </small>
                 </div>
@@ -313,7 +319,7 @@ const RoomPage = () => {
               badge ? "" : "hidden"
             } rounded-full h-5 w-5 bg-red-600 absolute z-50 right-0 top-0 flex justify-center items-center`}
           >
-            <span className="text-xs">{chats.length}</span>
+            <span className="text-xs">{Math.ceil(newMessages/2)}</span>
           </div>
           {isChatOpen ? (
             <div>
@@ -335,7 +341,6 @@ const RoomPage = () => {
           )}
         </div>
 
-
         {/* Tools */}
         <div className="flex flex-col md:flex-row absolute left-3 transform  translate-y-[-50%] top-1/2 md:top-auto md:left-auto md:bottom-3 md:translate-x-0 md:translate-y-0 justify-center items-center gap-1 md:gap-3">
           <div className="flex flex-col md:flex-row text-[#1a1b1e] justify-center items-center gap-5 p-2 md:p-5  md:h-12 bg-white shadow-xl rounded-lg my-5 ">
@@ -344,65 +349,104 @@ const RoomPage = () => {
               className={`flex tooltipAbove relative cursor-pointer justify-center items-center gap-2 hover:bg-[#d9dffc] hover:text-blue-500 p-2 rounded-md ${
                 tool === "pencil" ? "bg-[#d9dffc] text-blue-500" : ""
               }`}
-              onClick={() => {setTool(tool === "pencil" ? "pencil" : "pencil")
-                              setPenMode(!penMode);
+              onClick={() => {
+                setTool(tool === "pencil" ? "pencil" : "pencil");
+                setPenMode(!penMode);
               }}
             >
               <span className={`tooltipAbovetext`}>Pen</span>
               <FontAwesomeIcon icon={faPen} size="lg" />
-            {/* Mobile Thickness slider */}
-            <div className={`${penMode?"flex":"hidden"} flex-col absolute left-16 rounded-xl p-2 justify-center items-center gap-2 cursor-pointer bg-white`}>
-              <span className={`text-gray-900 font-semibold`}>Thickness</span>
-              <input
-                type="range"
-                value={thickness}
-                min={1}
-                max={50}
-                onChange={(e) => setThickness(e.target.value)}
-                className="cursor-pointer"
-                style={{
-                  /* Slider Track */
-                  background: "linear-gradient(to right, #007BFF, #007BFF)",
-                  /* Slider Thumb */
-                  border: "2px solid #007BFF",
+              {/* Mobile Thickness slider */}
+              <div
+                className={`${
+                  penMode ? "flex md:hidden" : "hidden"
+                } flex-col absolute left-16 rounded-xl p-2 justify-center items-center gap-2 cursor-pointer bg-white`}
+              >
+                <span className={`text-gray-900 font-semibold`}>Thickness</span>
+                <input
+                  type="range"
+                  value={thickness}
+                  min={1}
+                  max={50}
+                  onChange={(e) => setThickness(e.target.value)}
+                  className="cursor-pointer"
+                  style={{
+                    /* Slider Track */
+                    background: "linear-gradient(to right, #007BFF, #007BFF)",
+                    /* Slider Thumb */
+                    border: "2px solid #007BFF",
                   }}
-                  />
+                />
+              </div>
             </div>
-                  </div>
-            
+
             {/* Line */}
             <div
-              className={`flex ${isMobile?"tooltipRight":"tooltipAbove"} relative cursor-pointer justify-center items-center gap-2 hover:bg-[#d9dffc] hover:text-blue-500 p-2 rounded-md ${
+              className={`flex ${
+                isMobile ? "tooltipRight" : "tooltipAbove"
+              } relative cursor-pointer justify-center items-center gap-2 hover:bg-[#d9dffc] hover:text-blue-500 p-2 rounded-md ${
                 tool === "line" ? "bg-[#d9dffc] text-blue-500" : ""
               }`}
               onClick={() => setTool(tool === "line" ? "" : "line")}
             >
-              <span className={`${isMobile?"tooltipRighttext":"tooltipAbovetext"}`}>Line</span>
+              <span
+                className={`${
+                  isMobile ? "tooltipRighttext" : "tooltipAbovetext"
+                }`}
+              >
+                Line
+              </span>
               <FontAwesomeIcon icon={faSlash} rotation={270} size="lg" />
             </div>
             {/* Rectangle Shape */}
             <div
-              className={`flex ${isMobile?"tooltipRight":"tooltipAbove"} relative cursor-pointer justify-center items-center gap-2 hover:bg-[#d9dffc] hover:text-blue-500 p-2 rounded-md ${
+              className={`flex ${
+                isMobile ? "tooltipRight" : "tooltipAbove"
+              } relative cursor-pointer justify-center items-center gap-2 hover:bg-[#d9dffc] hover:text-blue-500 p-2 rounded-md ${
                 tool === "rect" ? "bg-[#d9dffc] text-blue-500" : ""
               }`}
               onClick={() => setTool(tool === "rect" ? "" : "rect")}
             >
-              <span className={`${isMobile?"tooltipRighttext":"tooltipAbovetext"}`}>Rectangle</span>
+              <span
+                className={`${
+                  isMobile ? "tooltipRighttext" : "tooltipAbovetext"
+                }`}
+              >
+                Rectangle
+              </span>
               <FontAwesomeIcon icon={faSquareFull} size="lg" />
             </div>
             {/* Circle Shape */}
             <div
-              className={`flex ${isMobile?"tooltipRight":"tooltipAbove"} relative cursor-pointer justify-center items-center gap-2 hover:bg-[#d9dffc] hover:text-blue-500 p-2 rounded-md ${
+              className={`flex ${
+                isMobile ? "tooltipRight" : "tooltipAbove"
+              } relative cursor-pointer justify-center items-center gap-2 hover:bg-[#d9dffc] hover:text-blue-500 p-2 rounded-md ${
                 tool === "circle" ? "bg-[#d9dffc] text-blue-500" : ""
               }`}
               onClick={() => setTool(tool === "circle" ? "" : "circle")}
             >
-              <span className={`${isMobile?"tooltipRighttext":"tooltipAbovetext"}`}>Circle</span>
+              <span
+                className={`${
+                  isMobile ? "tooltipRighttext" : "tooltipAbovetext"
+                }`}
+              >
+                Circle
+              </span>
               <FontAwesomeIcon icon={faCircle} size="lg" />
             </div>
             {/* Color Input*/}
-            <div className={`flex ${isMobile?"tooltipRight":"tooltipAbove"} relative justify-center items-center gap-2 cursor-pointer`}>
-              <span className={`${isMobile?"tooltipRighttext":"tooltipAbovetext"}`}>Color</span>
+            <div
+              className={`flex ${
+                isMobile ? "tooltipRight" : "tooltipAbove"
+              } relative justify-center items-center gap-2 cursor-pointer`}
+            >
+              <span
+                className={`${
+                  isMobile ? "tooltipRighttext" : "tooltipAbovetext"
+                }`}
+              >
+                Color
+              </span>
               <input
                 type="color"
                 name="tool"
@@ -413,8 +457,18 @@ const RoomPage = () => {
               />
             </div>
             {/* Thickness slider */}
-            <div className={`hidden md:flex ${isMobile?"tooltipRight":"tooltipAbove"} relative justify-center items-center gap-2 cursor-pointer`}>
-              <span className={`${isMobile?"tooltipRighttext":"tooltipAbovetext"}`}>Thickness</span>
+            <div
+              className={`hidden md:flex ${
+                isMobile ? "tooltipRight" : "tooltipAbove"
+              } relative justify-center items-center gap-2 cursor-pointer`}
+            >
+              <span
+                className={`${
+                  isMobile ? "tooltipRighttext" : "tooltipAbovetext"
+                }`}
+              >
+                Thickness
+              </span>
               <input
                 type="range"
                 value={thickness}
@@ -432,8 +486,18 @@ const RoomPage = () => {
             </div>
           </div>
           <div className="p-1 bg-white shadow-xl flex flex-col md:flex-row justify-center items-center md:h-12 md:w-36 rounded-lg gap-2 md:my-5">
-            <div className={`${isMobile?"tooltipRight":"tooltipAbove"} relative`}>
-              <span className={`${isMobile?"tooltipRighttext":"tooltipAbovetext"}`}>Undo</span>
+            <div
+              className={`${
+                isMobile ? "tooltipRight" : "tooltipAbove"
+              } relative`}
+            >
+              <span
+                className={`${
+                  isMobile ? "tooltipRighttext" : "tooltipAbovetext"
+                }`}
+              >
+                Undo
+              </span>
               <button
                 onClick={undo}
                 disabled={elements.length === 0}
@@ -449,10 +513,23 @@ const RoomPage = () => {
               </button>
             </div>
 
-            <hr className="hidden md:block md:h-8" style={{ borderLeft: "2px solid #ccc" }} />
+            <hr
+              className="hidden md:block md:h-8"
+              style={{ borderLeft: "2px solid #ccc" }}
+            />
             {/* <br className="block md:hidden w-8" style={{ borderBottom: "2px solid #ccc" }} /> */}
-            <div className={`${isMobile?"tooltipRight":"tooltipAbove"} relative`}>
-              <span className={`${isMobile?"tooltipRighttext":"tooltipAbovetext"}`}>Redo</span>
+            <div
+              className={`${
+                isMobile ? "tooltipRight" : "tooltipAbove"
+              } relative`}
+            >
+              <span
+                className={`${
+                  isMobile ? "tooltipRighttext" : "tooltipAbovetext"
+                }`}
+              >
+                Redo
+              </span>
               <button
                 onClick={redo}
                 disabled={history.length < 1}

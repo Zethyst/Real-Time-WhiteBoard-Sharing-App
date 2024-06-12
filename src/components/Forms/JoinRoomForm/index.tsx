@@ -6,6 +6,8 @@ import { Socket } from "socket.io-client";
 import { useSocket } from '@/context/SocketContext';
 import { useUser } from '@/context/UserContext';
 import { useRouter } from "next/router";
+import { useDispatch } from "react-redux";
+import { showMessage } from "@/store/reducers/notificationSlice";
 
 
 interface Props {
@@ -14,6 +16,7 @@ interface Props {
 }
 const Index: React.FC<Props> = ({ mode, setMode }) => {
 
+  const dispatch = useDispatch();
   const router = useRouter();
   const { socket } = useSocket();
   const { user, setUser } = useUser();
@@ -29,7 +32,10 @@ const Index: React.FC<Props> = ({ mode, setMode }) => {
   };
   const handleSubmit = (e: any) => {
     e.preventDefault();
-
+    if (roomID==="") {
+      dispatch(showMessage({ message: `Please enter a room code`, messageType: 'error' }));
+      return;
+    }
     const roomData = {
       name,
       roomID,
