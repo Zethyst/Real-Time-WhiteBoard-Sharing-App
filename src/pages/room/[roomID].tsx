@@ -18,10 +18,10 @@ import SendIcon from "@mui/icons-material/Send";
 
 // import your icons
 import {
-  faRotateRight,
-  faRotateLeft,
   faPen,
   faSlash,
+  faRotateRight,
+  faRotateLeft,
   faXmark,
   faMessage,
 } from "@fortawesome/free-solid-svg-icons";
@@ -29,10 +29,10 @@ import { faSquareFull, faCircle } from "@fortawesome/free-regular-svg-icons";
 import Sidebar from "@/components/Sidebar/Sidebar";
 
 library.add(
-  faRotateRight,
-  faRotateLeft,
   faPen,
   faSlash,
+  faRotateRight,
+  faRotateLeft,
   faSquareFull,
   faCircle,
   faXmark,
@@ -308,7 +308,7 @@ const RoomPage = () => {
         {/* Chat Button */}
         <div
           onClick={handleChat}
-          className="rounded-full  absolute left-6 md:left-10 p-4 bottom-4 md:bottom-7 w-16 h-16 flex justify-center items-center cursor-pointer shadow-xl text-white"
+          className="rounded-full absolute left-6 md:left-10 p-4 bottom-4 md:bottom-7 w-16 h-16 flex justify-center items-center cursor-pointer shadow-xl text-white"
           style={{
             background:
               "radial-gradient( circle farthest-corner at 22.4% 21.7%, rgba(2,83,185,1) 0%, rgba(4,189,228,1) 100.2% )",
@@ -322,19 +322,19 @@ const RoomPage = () => {
             <span className="text-xs">{Math.ceil(newMessages/2)}</span>
           </div>
           {isChatOpen ? (
-            <div>
+            <div className="text-white h-10 w-10 ">
               <FontAwesomeIcon
                 icon={faXmark}
                 size="2xl"
-                className="animate-icon"
+                className=" animate-icon"
               />
             </div>
           ) : (
-            <FontAwesomeIcon
-              icon={faMessage}
-              size="xl"
-              className="animate-icon"
-            />
+              <FontAwesomeIcon
+                icon={faMessage}
+                size="xl"
+                className=" animate-icon"
+                />
             // <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" height="32px" width="32px" role="img"  className="animate-icon" >
             //   <path fillRule="evenodd" clipRule="evenodd" d="M400 26.2c-193.3 0-350 156.7-350 350 0 136.2 77.9 254.3 191.5 312.1 15.4 8.1 31.4 15.1 48.1 20.8l-16.5 63.5c-2 7.8 5.4 14.7 13 12.1l229.8-77.6c14.6-5.3 28.8-11.6 42.4-18.7C672 630.6 750 512.5 750 376.2c0-193.3-156.7-350-350-350zm211.1 510.7c-10.8 26.5-41.9 77.2-121.5 77.2-79.9 0-110.9-51-121.6-77.4-2.8-6.8 5-13.4 13.8-11.8 76.2 13.7 147.7 13 215.3.3 8.9-1.8 16.8 4.8 14 11.7z"></path>
             // </svg>
@@ -346,7 +346,7 @@ const RoomPage = () => {
           <div className="flex flex-col md:flex-row text-[#1a1b1e] justify-center items-center gap-5 p-2 md:p-5  md:h-12 bg-white shadow-xl rounded-lg my-5 ">
             {/* Pencil draw */}
             <div
-              className={`flex tooltipAbove relative cursor-pointer justify-center items-center gap-2 hover:bg-[#d9dffc] hover:text-blue-500 p-2 rounded-md ${
+              className={`flex tooltipAbove text-[#1a1b1e] h-10 w-10  relative cursor-pointer justify-center items-center gap-2 hover:bg-[#d9dffc] hover:text-blue-500 p-2 rounded-md ${
                 tool === "pencil" ? "bg-[#d9dffc] text-blue-500" : ""
               }`}
               onClick={() => {
@@ -380,11 +380,11 @@ const RoomPage = () => {
               </div>
             </div>
 
-            {/* Line */}
+              {/* Line */}
             <div
               className={`flex ${
                 isMobile ? "tooltipRight" : "tooltipAbove"
-              } relative cursor-pointer justify-center items-center gap-2 hover:bg-[#d9dffc] hover:text-blue-500 p-2 rounded-md ${
+              } relative text-[#1a1b1e] h-10 w-10  cursor-pointer justify-center items-center gap-2 hover:bg-[#d9dffc] hover:text-blue-500 p-2 rounded-md ${
                 tool === "line" ? "bg-[#d9dffc] text-blue-500" : ""
               }`}
               onClick={() => setTool(tool === "line" ? "" : "line")}
@@ -396,13 +396,13 @@ const RoomPage = () => {
               >
                 Line
               </span>
-              <FontAwesomeIcon icon={faSlash} rotation={270} size="lg" />
+                <FontAwesomeIcon icon={faSlash} rotation={270} size="lg" />
             </div>
             {/* Rectangle Shape */}
             <div
               className={`flex ${
                 isMobile ? "tooltipRight" : "tooltipAbove"
-              } relative cursor-pointer justify-center items-center gap-2 hover:bg-[#d9dffc] hover:text-blue-500 p-2 rounded-md ${
+              } relative text-[#1a1b1e] h-10 w-10  cursor-pointer justify-center items-center gap-2 hover:bg-[#d9dffc] hover:text-blue-500 p-2 rounded-md ${
                 tool === "rect" ? "bg-[#d9dffc] text-blue-500" : ""
               }`}
               onClick={() => setTool(tool === "rect" ? "" : "rect")}
@@ -420,7 +420,7 @@ const RoomPage = () => {
             <div
               className={`flex ${
                 isMobile ? "tooltipRight" : "tooltipAbove"
-              } relative cursor-pointer justify-center items-center gap-2 hover:bg-[#d9dffc] hover:text-blue-500 p-2 rounded-md ${
+              } relative text-[#1a1b1e] h-10 w-10  cursor-pointer justify-center items-center gap-2 hover:bg-[#d9dffc] hover:text-blue-500 p-2 rounded-md ${
                 tool === "circle" ? "bg-[#d9dffc] text-blue-500" : ""
               }`}
               onClick={() => setTool(tool === "circle" ? "" : "circle")}
@@ -485,6 +485,7 @@ const RoomPage = () => {
               />
             </div>
           </div>
+          {/* Undo Redo */}
           <div className="p-1 bg-white shadow-xl flex flex-col md:flex-row justify-center items-center md:h-12 md:w-36 rounded-lg gap-2 md:my-5">
             <div
               className={`${
@@ -500,7 +501,6 @@ const RoomPage = () => {
               </span>
               <button
                 onClick={undo}
-                disabled={elements.length === 0}
                 className={`rounded-md text-[#1a1b1e] h-10 w-14 flex justify-center items-center p-4
           ${
             elements.length === 0
@@ -532,7 +532,6 @@ const RoomPage = () => {
               </span>
               <button
                 onClick={redo}
-                disabled={history.length < 1}
                 className={`rounded-md text-[#1a1b1e]  h-10 w-14 flex justify-center items-center p-4
              ${
                history.length < 1

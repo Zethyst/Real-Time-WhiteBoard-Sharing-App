@@ -106,7 +106,7 @@ const Canvas: React.FC<Props> = ({
     }
     setTimeout(() => {
       setLoading(false);
-    }, 2000);
+    }, 1000);
   }, []);
 
   //! Ensuring canvas remembers the drawings after reloads because of lazy loading of elements state
