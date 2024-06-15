@@ -32,7 +32,7 @@ function Sidebar() {
   };
   return (
     <aside
-      className={`p-4  h-[100dvh]  opacity-100 bg-[white] w-[255px]  relative z-20  overflow-y-scroll`}
+      className={`p-4  h-[100svh]  opacity-100 bg-[white] w-[255px]  relative z-20  overflow-y-scroll`}
       style={{
         transition: "transform 0.9s ease",
         boxShadow:

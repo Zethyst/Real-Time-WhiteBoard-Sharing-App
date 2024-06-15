@@ -91,7 +91,7 @@ export default function Home() {
         <link rel="icon" href="./favicon.ico" />
       </Head>
     <div
-      className="h-[100vh] flex justify-center items-center"
+      className="h-[100svh] flex justify-center items-center"
       style={{ background: "linear-gradient(24deg, #141e30, #243b55)" }}
     >
       <div className="absolute z-50">

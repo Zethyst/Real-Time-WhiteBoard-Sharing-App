@@ -219,7 +219,7 @@ const RoomPage = () => {
     <div className="overflow-hidden">
       {/* <h1>Room No: {router.query.roomID}</h1> */}
       <div className="h-[100vh] flex gap-20 justify-center items-end relative">
-        <div className="p-2 md:p-5 absolute md:left-10 top-0 bg-white shadow-xl flex flex-col justify-center items-center w-full md:w-80  rounded-lg md:my-5">
+        <div className="p-3 md:p-5 absolute md:left-10 top-0 bg-white shadow-xl flex flex-col justify-center items-center w-full md:w-80  rounded-lg md:my-5">
           <div className="hidden md:block text-2xl text-center font-semibold">
             Whiteboard Sharing App{" "}
           </div>
