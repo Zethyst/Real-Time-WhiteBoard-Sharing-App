@@ -3,9 +3,10 @@ import type { AppProps } from "next/app";
 import io, { Socket } from "socket.io-client";
 import { SocketProvider } from "@/context/SocketContext";
 import { UserProvider } from "../context/UserContext";
-import { useEffect } from "react";
+import React from "react";
 import { Provider } from "react-redux";
 import { store } from "@/store/store";
+
 
 const server = "https://whiteboard-sharing-app-backend.onrender.com";
 // const server = "http://localhost:5000";
@@ -30,6 +31,7 @@ export default function App({ Component, pageProps }: AppProps) {
     <SocketProvider socket={socket}>
       <UserProvider>
         <Provider store={store}>
+          
           <Component {...pageProps} />
         </Provider>
       </UserProvider>

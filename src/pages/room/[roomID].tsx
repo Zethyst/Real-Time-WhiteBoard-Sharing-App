@@ -16,8 +16,8 @@ import { useDispatch } from "react-redux";
 import { showMessage } from "@/store/reducers/notificationSlice";
 import SendIcon from "@mui/icons-material/Send";
 
-import { IonIcon } from '@ionic/react';
-import { colorFill } from 'ionicons/icons';
+// import { IonIcon } from '@ionic/react';
+// import { colorFill } from 'ionicons/icons';
 
 // import your icons
 import {
@@ -27,7 +27,8 @@ import {
   faRotateLeft,
   faXmark,
   faMessage,
-  faEraser
+  faEraser,
+  faFillDrip
 } from "@fortawesome/free-solid-svg-icons";
 import { faSquareFull, faCircle } from "@fortawesome/free-regular-svg-icons";
 import Sidebar from "@/components/Sidebar/Sidebar";
@@ -35,6 +36,7 @@ import Sidebar from "@/components/Sidebar/Sidebar";
 library.add(
   faPen,
   faEraser,
+  faFillDrip,
   faSlash,
   faRotateRight,
   faRotateLeft,
@@ -502,7 +504,8 @@ const RoomPage = () => {
               >
                 Fill
               </span>
-              <IonIcon icon={colorFill} size="large"></IonIcon>
+              <FontAwesomeIcon icon={faFillDrip} size="lg" />
+              {/* <IonIcon icon={colorFill} size="large"></IonIcon> */}
             </div>
             {/* Thickness slider */}
             <div
