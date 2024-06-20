@@ -25,6 +25,7 @@ interface Props {
   fill: boolean;
   thickness: string;
   socket: Socket;
+  handleClearCanvas: () => void; 
 }
 
 const Canvas: React.FC<Props> = ({
@@ -37,6 +38,7 @@ const Canvas: React.FC<Props> = ({
   fill,
   thickness,
   socket,
+  handleClearCanvas,
 }: Props) => {
   const { user, setUser } = useUser();
     const dispatch = useDispatch();
@@ -311,6 +313,10 @@ const Canvas: React.FC<Props> = ({
     }
     
     if (tool === "eraser") {
+      if (elements.length === 1) {
+        handleClearCanvas();
+      }
+      else{
       setElements((prevElements) => {
         return prevElements.filter((element) => {
           if (element.type === "pencil") {
@@ -364,6 +370,7 @@ const Canvas: React.FC<Props> = ({
         });
       });
       redrawCanvas();
+    }
     }
     else if (tool === "pencil") {
       const { path } = elements[elements.length - 1];

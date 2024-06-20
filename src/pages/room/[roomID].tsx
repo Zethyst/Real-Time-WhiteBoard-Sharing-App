@@ -247,6 +247,7 @@ const RoomPage = () => {
             fill={fill}
             thickness={thickness}
             socket={socket}
+            handleClearCanvas={handleClearCanvas}
           />
         </div>
         {/* Chat box */}
