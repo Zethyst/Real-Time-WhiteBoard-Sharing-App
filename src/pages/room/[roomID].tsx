@@ -24,12 +24,14 @@ import {
   faRotateLeft,
   faXmark,
   faMessage,
+  faEraser
 } from "@fortawesome/free-solid-svg-icons";
 import { faSquareFull, faCircle } from "@fortawesome/free-regular-svg-icons";
 import Sidebar from "@/components/Sidebar/Sidebar";
 
 library.add(
   faPen,
+  faEraser,
   faSlash,
   faRotateRight,
   faRotateLeft,
@@ -82,6 +84,7 @@ const RoomPage = () => {
   const [isMobile, setIsMobile] = useState<boolean>(false);
   const [penMode, setPenMode] = useState<boolean>(false);
   const [badge, setBadge] = useState<boolean>(false);
+  const [fill, setFill] = useState<boolean>(false);
   const [message, setMessage] = useState<string>("");
   const [chats, setChats] = useState<chat[]>([]);
   const [thickness, setThickness] = useState("5");
@@ -236,6 +239,7 @@ const RoomPage = () => {
             setElements={setElements}
             tool={tool}
             color={color}
+            fill={fill}
             thickness={thickness}
             socket={socket}
           />
@@ -343,7 +347,7 @@ const RoomPage = () => {
 
         {/* Tools */}
         <div className="flex flex-col md:flex-row absolute left-3 transform  translate-y-[-50%] top-1/2 md:top-auto md:left-auto md:bottom-3 md:translate-x-0 md:translate-y-0 justify-center items-center gap-1 md:gap-3">
-          <div className="flex flex-col md:flex-row text-[#1a1b1e] justify-center items-center gap-5 p-2 md:p-5  md:h-12 bg-white shadow-xl rounded-lg my-5 ">
+          <div className="flex flex-col md:flex-row text-[#1a1b1e] justify-center items-center gap-3 p-2 md:p-5  md:h-12 bg-white shadow-xl rounded-lg my-5 ">
             {/* Pencil draw */}
             <div
               className={`flex tooltipAbove text-[#1a1b1e] h-10 w-10  relative cursor-pointer justify-center items-center gap-2 hover:bg-[#d9dffc] hover:text-blue-500 p-2 rounded-md ${
@@ -352,6 +356,7 @@ const RoomPage = () => {
               onClick={() => {
                 setTool(tool === "pencil" ? "pencil" : "pencil");
                 setPenMode(!penMode);
+                setFill(false);
               }}
             >
               <span className={`tooltipAbovetext`}>Pen</span>
@@ -379,7 +384,24 @@ const RoomPage = () => {
                 />
               </div>
             </div>
-
+            {/* Eraser */}
+            <div
+              className={`flex ${
+                isMobile ? "tooltipRight" : "tooltipAbove"
+              } relative text-[#1a1b1e] h-10 w-10  cursor-pointer justify-center items-center gap-2 hover:bg-[#d9dffc] hover:text-blue-500 p-2 rounded-md ${
+                tool === "eraser" ? "bg-[#d9dffc] text-blue-500" : ""
+              }`}
+              onClick={() => {setTool(tool === "eraser" ? "" : "eraser");setFill(false)}}
+            >
+              <span
+                className={`${
+                  isMobile ? "tooltipRighttext" : "tooltipAbovetext"
+                }`}
+              >
+                Eraser
+              </span>
+                <FontAwesomeIcon icon={faEraser}  size="lg" />
+            </div>
               {/* Line */}
             <div
               className={`flex ${
@@ -387,7 +409,7 @@ const RoomPage = () => {
               } relative text-[#1a1b1e] h-10 w-10  cursor-pointer justify-center items-center gap-2 hover:bg-[#d9dffc] hover:text-blue-500 p-2 rounded-md ${
                 tool === "line" ? "bg-[#d9dffc] text-blue-500" : ""
               }`}
-              onClick={() => setTool(tool === "line" ? "" : "line")}
+              onClick={() => {setTool(tool === "line" ? "" : "line");setFill(false)}}
             >
               <span
                 className={`${
@@ -455,6 +477,31 @@ const RoomPage = () => {
                 onChange={(e) => setColor(e.target.value)}
                 className="cursor-pointer "
               />
+            </div>
+            {/* Fill Color */}
+            <div
+              className={`flex ${
+                isMobile ? "tooltipRight" : "tooltipAbove"
+              } relative text-[#1a1b1e] h-10 w-10  cursor-pointer justify-center items-center gap-2 hover:bg-[#d9dffc] hover:text-blue-500 p-2 rounded-md ${
+                fill === true ? "bg-[#d9dffc] text-blue-500" : ""
+              }
+              ${
+                tool !== "circle" && tool !== "rect"
+                  ? "opacity-40 pointer-events-none"
+                  : "hover:bg-[#d9dffc] hover:text-blue-500"
+              }`}
+              onClick={() => setFill(!fill)}
+            >
+              <span
+                className={`${
+                  isMobile ? "tooltipRighttext" : "tooltipAbovetext"
+                }`}
+              >
+                Fill
+              </span>
+              <span className="material-symbols-outlined scale-110">
+                colors
+              </span>
             </div>
             {/* Thickness slider */}
             <div
