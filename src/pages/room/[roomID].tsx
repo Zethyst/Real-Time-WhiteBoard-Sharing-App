@@ -16,6 +16,9 @@ import { useDispatch } from "react-redux";
 import { showMessage } from "@/store/reducers/notificationSlice";
 import SendIcon from "@mui/icons-material/Send";
 
+import { IonIcon } from '@ionic/react';
+import { colorFill } from 'ionicons/icons';
+
 // import your icons
 import {
   faPen,
@@ -499,9 +502,7 @@ const RoomPage = () => {
               >
                 Fill
               </span>
-              <span className="material-symbols-outlined scale-110">
-                colors
-              </span>
+              <IonIcon icon={colorFill} size="large"></IonIcon>
             </div>
             {/* Thickness slider */}
             <div
